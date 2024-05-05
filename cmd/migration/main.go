@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -24,6 +25,8 @@ func main() {
 	}
 
 	defer conn.Close()
+
+	CreateTable(conn)
 
 	res, err := conn.Query("SELECT * FROM migrations;")
 
@@ -56,7 +59,7 @@ func main() {
 			return nil
 		}
 
-		if strings.HasSuffix(info.Name(), ".sql") {
+		if !strings.HasSuffix(info.Name(), ".sql") {
 			return nil
 		}
 
@@ -91,7 +94,7 @@ func main() {
 		}
 
 		fmt.Printf("%s migrated", info.Name())
-		
+
 		return nil
 	})
 }
@@ -103,4 +106,14 @@ func inSlice(val interface{}, slice []Migration) bool {
 		}
 	}
 	return false
+}
+
+func CreateTable(conn *sql.DB) error {
+	_, err := conn.Query("CREATE TABLE IF NOT EXISTS migrations (id VARCHAR(255) PRIMARY KEY, name VARCHAR(255));")
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	return nil
 }
