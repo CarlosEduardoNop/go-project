@@ -1,0 +1,1 @@
+CREATE TABLE orders (id serial primary key, name varchar(100), price int)

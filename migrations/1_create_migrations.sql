@@ -1,0 +1,1 @@
+CREATE TABLE migrations (id serial primary key, name varchar(100), created_at timestamp default current_timestamp);
